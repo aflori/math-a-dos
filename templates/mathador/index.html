@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mathador</title>
+</head>
+<body>
+{% if createForm %}
+    <form action="{% url 'math:math_index' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_div }}
+        <button type="submit">Confirmer</button>
+    </form>
+{% else %}
+{% endif %}
+</body>
+</html>
