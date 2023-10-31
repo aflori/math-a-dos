@@ -37,3 +37,4 @@ class Dice(models.Model):
 class Player(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
     on_case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
