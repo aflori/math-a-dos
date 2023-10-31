@@ -20,7 +20,7 @@ from django.urls import path, include
 
 
 def local_redirect(request):
-    return redirect("math_index")
+    return redirect("math:math_index")
 
 
 urlpatterns = [
