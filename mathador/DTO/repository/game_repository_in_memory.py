@@ -16,3 +16,9 @@ class GameRepositoryInMemory:
 
     def save_game(self, game: board.Board):
         self._games[game.id] = copy.deepcopy(game)
+
+    def is_not_empty(self):
+        return len(self._games) != 0
+
+    def delete(self, game: board.Board):
+        del self._games[game.id]

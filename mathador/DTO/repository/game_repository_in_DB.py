@@ -96,3 +96,9 @@ class GameRepositoryInDB:
             if dto_player.id != 0:
                 db_player.id = dto_player.id
             db_player.save()
+
+    def is_not_empty(self):
+        return DB_Board.objects.count() == 0
+
+    def delete(self, board):
+        self._board_DB.get(pk=board.id).delete()
