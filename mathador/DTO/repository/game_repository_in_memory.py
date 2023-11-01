@@ -11,7 +11,7 @@ class GameRepositoryInMemory:
     def get_game_by_id(self, id: int):
         return copy.deepcopy(self._games[id])
 
-    def gat_all_game(self) -> dict[int, board.Board]:
+    def get_all_game(self) -> dict[int, board.Board]:
         return copy.deepcopy(self._games)
 
     def save_game(self, game: board.Board):
