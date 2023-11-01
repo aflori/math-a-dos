@@ -1,13 +1,17 @@
+import pytest
+
 from mathador.DTO.repository.gamerepositoryinmemory import GameRepositoryInMemory
 from mathador.action.create_game.create_game_command import CreateGame
 
 
-def test_create_board():
+@pytest.mark.parametrize("players, cases", [(1, 10), (2, 30)])
+def test_create_board(players, cases):
     board_repo = GameRepositoryInMemory()
     command = CreateGame(board_repo)
 
-    command.execute(1, 1)
+    command.execute(cases, players)
 
     game = board_repo.get_game_by_id(0)
 
-    assert len(game.dices) == 5
+    assert (len(game.dices) == 5 and game.result_dice is not None and game.moving_dice is not None and
+            len(game.players) == players and len(game.cases) == cases)
