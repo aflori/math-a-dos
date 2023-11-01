@@ -21,6 +21,4 @@ def create_game(request):
         form = CreateGameForm(request.POST)
         if form.is_valid():
             return redirect("math:math_index")
-        return http.HttpResponse("something went wrong1")
-    return http.HttpResponse("something went wrong2")
     raise http.Http404()

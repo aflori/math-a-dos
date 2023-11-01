@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Board(models.Model):
-    list_cases = models.CharField(max_length=75)
+    pass
 
 
 class Case(models.Model):
