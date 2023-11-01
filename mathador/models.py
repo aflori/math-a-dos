@@ -32,6 +32,8 @@ class Dice(models.Model):
     number_of_face = models.IntegerField()
     last_number_throws = models.IntegerField(default=0)
     from_board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    is_result_dice = models.BooleanField()
+    is_movement_dice = models.BooleanField()
 
 
 class Player(models.Model):
