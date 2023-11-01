@@ -7,7 +7,9 @@ from .player import Player
 
 @dataclasses.dataclass
 class Board:
-    id: int
     cases: list[Case]
     dices: list[Dice]
+    moving_dice: Dice
+    result_dice: Dice
     players: list[Player]
+    id: int = 0
