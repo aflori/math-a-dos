@@ -13,7 +13,8 @@ def index(request):
         context = {"createForm": True,
                    "form": CreateGameForm()}
         return render(request, "mathador/index.html", context)
-    return http.HttpResponse("Ceci est ma page d'accueil!")
+    else:
+        return http.HttpResponse(Board.objects.all())
 
 
 def create_game(request):
