@@ -11,7 +11,7 @@ game_repo = GameRepositoryInDB()
 
 def index(request):
     if Board.objects.count() == 0:
-        context = {"createForm": True,
+        context = {
                    "form": CreateGameForm()}
         return render(request, "mathador/index.html", context)
     else:
