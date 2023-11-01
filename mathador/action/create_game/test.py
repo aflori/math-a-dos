@@ -1,6 +1,6 @@
 import pytest
 
-from mathador.DTO.repository.gamerepositoryinmemory import GameRepositoryInMemory
+from mathador.DTO.repository.game_repository_in_memory import GameRepositoryInMemory
 from mathador.action.create_game.create_game_command import CreateGame
 
 
