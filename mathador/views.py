@@ -1,6 +1,7 @@
 from django import http
 from django.shortcuts import render, redirect
 
+from mathador.DTO.repository.game_repository_in_DB import GameRepositoryInDB
 from mathador.models import Board
 from mathador.form import CreateGameForm
 
@@ -14,7 +15,8 @@ def index(request):
                    "form": CreateGameForm()}
         return render(request, "mathador/index.html", context)
     else:
-        return http.HttpResponse(Board.objects.all())
+        game_repo = GameRepositoryInDB()
+        return http.HttpResponse(game_repo.get_all_game())
 
 
 def create_game(request):
