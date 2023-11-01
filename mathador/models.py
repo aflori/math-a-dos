@@ -11,11 +11,11 @@ class Case(models.Model):
 
     # enum type
     class Operation(models.TextChoices):
-        ADDITION = '+', 'add'
-        SUBTRACTION = '-', 'sub'
-        MULTIPLICATION = '*', 'mul'
-        DIVISION = '÷', 'div'
-        NONE = '.', 'none'
+        ADDITION = '+', '+'
+        SUBTRACTION = '-', '-'
+        MULTIPLICATION = '*', '*'
+        DIVISION = '÷', '÷'
+        NONE = '.', '.'
 
     mandatory_operation = models.CharField(
         max_length=2,
@@ -38,5 +38,5 @@ class Dice(models.Model):
 
 class Player(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
-    on_case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    on_case = models.ForeignKey(Case, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=50)
