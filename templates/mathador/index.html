@@ -5,7 +5,7 @@
     <title>Mathador</title>
 </head>
 <body>
-    <form action="{% url 'math:math_createG' %}" method="post">
+    <form action="{% url action_url %}" method="post">
         {% csrf_token %}
         {{ form.as_div }}
         <button type="submit">Confirmer</button>
