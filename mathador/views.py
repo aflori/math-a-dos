@@ -14,6 +14,10 @@ def get_game_from_DB() -> Board:
     return game_repo.get_all_game()[0]  # contain at least 1 game
 
 
+def get_player_by_id(id_player):
+    return game_repo.get_player_by_id(id_player)
+
+
 def index(request):
     if game_repo.is_not_empty():
         context = {
@@ -51,7 +55,7 @@ def start_game(request):
 
 def play(request, player_id):
     game = get_game_from_DB()
-    player = game.players[player_id - 1]
+    player = get_player_by_id(player_id)
     context = {
         "player_name": player.name,
         "case_at": player.on_the_case,
