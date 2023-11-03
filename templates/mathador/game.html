@@ -8,9 +8,9 @@
 <h2> Bienvenu {{ player_name }}</h2>
 <p> Tu es sur la case {{ case_at }} </p>
 <div>
-    <p>Tu peux te déplacer de {{ number_dice }} case.</p>
+    <p>Tu peux te déplacer de <span class="player_position">{{ number_dice }}</span> case.</p>
     <p>Les cases devant toi sont :</p>
-    <ul>
+    <ul class="next_case">
         {% for case in case_in_front %}
             <li> {{ forloop.counter }}: {{ case.mandatory_operation }}
                 {% if case.optional_operation != neutral_operation %}
