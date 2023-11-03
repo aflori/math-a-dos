@@ -31,6 +31,11 @@ def _save_case(db_board, dto_case):
     db_case.save()
 
 
+def _convert_db_to_DTO(player):
+    return DTO_Player(name=player.name, on_the_case=player.on_case.case_number if player.on_case is not None else 0,
+                      id=player.id)
+
+
 class GameRepositoryInDB:
     def __init__(self):
         from mathador import models
@@ -58,10 +63,7 @@ class GameRepositoryInDB:
 
         # players var
         players = self._player_DB.filter(board=board)
-        players = [
-            DTO_Player(name=player.name, on_the_case=player.on_case.case_number if player.on_case is not None else 0,
-                       id=player.id) for player in
-            players]
+        players = [_convert_db_to_DTO(player) for player in players]
 
         board = DTO_Board(id=board.id, cases=cases, dices=dices, moving_dice=movement_dice, result_dice=result_dice,
                           players=players)
@@ -87,18 +89,23 @@ class GameRepositoryInDB:
         _save_dice(db_board, dto_board.result_dice, True, False)
 
         for dto_player in dto_board.players:
-            if dto_player.on_the_case == 0:
-                db_player = DB_Player(board=db_board, name=dto_player.name)
-            else:
-                player_in_case = self._case_DB.get(from_board=db_board, case_number=dto_player.on_the_case)
-                db_player = DB_Player(board=db_board, name=dto_player.name, on_case=player_in_case)
-
-            if dto_player.id != 0:
-                db_player.id = dto_player.id
-            db_player.save()
+            self._save_player(db_board, dto_player)
 
     def is_not_empty(self):
         return DB_Board.objects.count() == 0
 
     def delete(self, board):
         self._board_DB.get(pk=board.id).delete()
+
+    def get_player_by_id(self, id_player: int):
+        return _convert_db_to_DTO(self._player_DB.get(pk=id_player))
+
+    def _save_player(self, db_board, dto_player):
+        if dto_player.on_the_case == 0:
+            db_player = DB_Player(board=db_board, name=dto_player.name)
+        else:
+            player_in_case = self._case_DB.get(from_board=db_board, case_number=dto_player.on_the_case)
+            db_player = DB_Player(board=db_board, name=dto_player.name, on_case=player_in_case)
+        if dto_player.id != 0:
+            db_player.id = dto_player.id
+        db_player.save()
