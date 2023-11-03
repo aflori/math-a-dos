@@ -5,17 +5,27 @@ class Board(models.Model):
     pass
 
 
+operations = {
+    "plus": '+',
+    "subtraction": '-',
+    "multiplication": '*',
+    "division": '/',
+    "none": '.',
+    "random": '?'  # not implemented for now
+}
+
+
 class Case(models.Model):
     from_board = models.ForeignKey(Board, on_delete=models.CASCADE)
     case_number = models.IntegerField()
 
     # enum type
     class Operation(models.TextChoices):
-        ADDITION = '+', '+'
-        SUBTRACTION = '-', '-'
-        MULTIPLICATION = '*', '*'
-        DIVISION = '÷', '÷'
-        NONE = '.', '.'
+        ADDITION = operations["plus"], operations["plus"]
+        SUBTRACTION = operations["subtraction"], operations["subtraction"]
+        MULTIPLICATION = operations["multiplication"], operations["multiplication"]
+        DIVISION = operations["division"], operations["division"]
+        NONE = operations["none"], operations["none"]
 
     mandatory_operation = models.CharField(
         max_length=2,
