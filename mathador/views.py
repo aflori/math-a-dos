@@ -60,6 +60,15 @@ def play(request, player_id):
         "player_name": player.name,
         "case_at": player.on_the_case,
         "case_in_front": [game.cases[i] for i in range(game.moving_dice.number_of_face)],
-        "neutral_operation": ENUM_OPERATION["none"]
+        "neutral_operation": ENUM_OPERATION["none"],
+        "id": player_id
     }
     return render(request, "mathador/game.html", context)
+
+
+def get_game_js(request, player_id):
+    context = {
+        "game": get_game_from_DB(),
+        "player": get_player_by_id(player_id)
+    }
+    return render(request, "mathador/game.js", context,content_type="application/x-javascript")
