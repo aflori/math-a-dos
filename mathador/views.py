@@ -69,6 +69,6 @@ def play(request, player_id):
 def get_game_js(request, player_id):
     context = {
         "game": get_game_from_DB(),
-        "player": get_player_by_id(player_id)
+        "player": get_player_by_id(player_id).asDict()
     }
     return render(request, "mathador/game.js", context,content_type="application/x-javascript")
