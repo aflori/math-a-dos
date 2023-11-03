@@ -10,7 +10,7 @@
 <div>
     <p>Tu peux te déplacer de <span class="player_position">{{ number_dice }}</span> case.</p>
     <p>Les cases devant toi sont :</p>
-    <ul class="next_case">
+    <ul class="next_case_positions">
         {% for case in case_in_front %}
             <li> {{ forloop.counter }}: {{ case.mandatory_operation }}
                 {% if case.optional_operation != neutral_operation %}
