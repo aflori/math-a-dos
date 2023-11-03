@@ -7,7 +7,9 @@ const page_tag = {
 };
 
 function send_start_turn_request(element) {
-
+    fetch("{% url 'math:start_turn' player_id %}").then(
+        data => console.log(data.json())
+    );
 }
 
 function send_throw_dice_request(element) {
@@ -24,6 +26,8 @@ function create_tag() {
 function initialize_tag() {
     page_tag.button_start_turn.textContent = "Se déplacer";
     page_tag.button_start_turn.addEventListener("click", send_start_turn_request);
+
+    document.body.appendChild(page_tag.button_start_turn)
 
     page_tag.button_throw_dice.textContent = "lancer les dés";
     page_tag.button_throw_dice.addEventListener("click", send_throw_dice_request)

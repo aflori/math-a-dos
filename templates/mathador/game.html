@@ -20,8 +20,8 @@
         {% endfor %}
     </ul>
 </div>
-
-<script src="{% url "math:game_js" id %}">
+{% url 'math:start_turn' id %}
+<script src="{% url 'math:game_js' id %}">
 </script>
 </body>
 </html>
