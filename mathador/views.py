@@ -85,4 +85,9 @@ def start_turn(request, player_id):
 
 
 def throw_enigm_dice(request, player_id):
-    return http.JsonResponse({"id": player_id})
+    game = get_game_from_DB()
+    from  mathador.action.throw_dice.throw_enigm_dices import EnigmDiceThrowCommand
+
+    command = EnigmDiceThrowCommand(game_repo)
+    command.execute(game.id)
+    return http.JsonResponse(get_game_from_DB().asDict())
