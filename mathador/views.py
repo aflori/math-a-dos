@@ -1,7 +1,7 @@
 from django import http
 from django.shortcuts import render, redirect
 
-from mathador.DTO.board import Board
+from mathador.DTO.game_element import Board
 from mathador.DTO.repository.game_repository_in_DB import GameRepositoryInDB
 from mathador.form import *
 from mathador.models import operations as ENUM_OPERATION
@@ -76,4 +76,9 @@ def get_game_js(request, player_id):
 
 
 def start_turn(request, player_id):
-    return http.JsonResponse({"id":player_id})
+    game = get_game_from_DB()
+    from  mathador.action.throw_dice.throw_movement_dice import MoveDiceThrowCommand
+
+    command = MoveDiceThrowCommand(game_repo)
+    command.execute(game.id)
+    return http.JsonResponse(get_game_from_DB().asDict())

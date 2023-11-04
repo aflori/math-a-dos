@@ -1,9 +1,6 @@
 import random
 
-from mathador.DTO.board import Board
-from mathador.DTO.case import Case
-from mathador.DTO.dice import Dice
-from mathador.DTO.player import Player
+from mathador.DTO.game_element import Board, Player, Case, Dice
 
 
 class CreateGame:

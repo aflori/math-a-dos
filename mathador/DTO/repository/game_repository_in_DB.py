@@ -1,7 +1,4 @@
-from mathador.DTO.board import Board as DTO_Board
-from mathador.DTO.case import Case as DTO_Case
-from mathador.DTO.dice import Dice as DTO_Dice
-from mathador.DTO.player import Player as DTO_Player
+from mathador.DTO.game_element import Board as DTO_Board, Player as DTO_Player, Case as DTO_Case, Dice as DTO_Dice
 
 from mathador.models import Board as DB_Board
 from mathador.models import Case as DB_Case

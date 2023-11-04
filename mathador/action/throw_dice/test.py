@@ -2,8 +2,7 @@ import random
 
 import pytest
 
-from mathador.DTO.board import Board
-from mathador.DTO.dice import Dice
+from mathador.DTO.game_element import Board, Dice
 from mathador.DTO.repository.game_repository_in_memory import GameRepositoryInMemory
 from .throw_enigm_dices import EnigmDiceThrowCommand
 from .throw_movement_dice import MoveDiceThrowCommand

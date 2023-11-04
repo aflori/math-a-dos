@@ -1,13 +1,13 @@
 import random
 
-from mathador.DTO.board import Board
+from mathador.DTO.game_element import Board
 
 
 class MoveDiceThrowCommand:
 
     def __init__(self, game_repository):
         self.repository = game_repository
-        self.random = random.Random
+        self.random = random.Random()
 
     def execute(self, game_id):
         game: Board = self.repository.get_game_by_id(game_id)
