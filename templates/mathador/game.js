@@ -35,7 +35,11 @@ function get_case_operation_from_its_position(case_number, game_state) {
     return [ player_case.mandatory_operation, player_case.optional_operation];
 }
 
-function send_start_turn_request(element) {
+function add_new_tag_in_body(element) {
+    document.body.appendChild(element);
+}
+
+function send_start_turn_request() {
     function create_movement_text(movement_text_tag, number_case_moving) {
         movement_text_tag.textContent = "tu as avancé de " + number_case_moving + " case";
         if (number_case_moving > 1) {
@@ -57,31 +61,56 @@ function send_start_turn_request(element) {
 
     fetch("{% url 'math:start_turn' player_id %}").then(
         data => {
-            return data = data.json();
+            return data.json();
         })
         .then(
             data => {
-                console.log(data);
                 const numberCaseMoving = data.moving_dice.last_number_throw;
 
                 remove_body_child(page_tag.button_start_turn);
 
                 const movement_text_tag = page_tag.amount_movement_by_movement_dice;
-                document.body.appendChild(movement_text_tag);
+                add_new_tag_in_body(movement_text_tag);
                 create_movement_text(movement_text_tag, numberCaseMoving);
 
                 const operation_tag = page_tag.mandatory_operation;
-                document.body.appendChild(operation_tag);
+                add_new_tag_in_body(operation_tag);
 
                 create_operation_text(data, numberCaseMoving, operation_tag);
 
-                document.body.appendChild(page_tag.button_throw_dice);
+                add_new_tag_in_body(page_tag.button_throw_dice);
             }
         );
 }
 
-function send_throw_dice_request(element) {
+function send_throw_dice_request() {
+    function extract_available_numbers(json) {
+        const available_numbers = []
+        const number_dices = json.dices;
+        for (let i = 0; i < number_dices.length; i++) {
+            available_numbers.push(number_dices[i].last_number_throw)
+        }
+        return available_numbers;
+    }
 
+    fetch("{% url 'math:throw_enigm_dices' player_id %}").then(
+        data => {
+            return data.json();
+        })
+        .then(
+            json => {
+                console.log(json);
+                remove_body_child(page_tag.button_throw_dice);
+
+                result = json.result_dice.last_number_throw
+                const available_numbers = extract_available_numbers(json);
+
+                page_tag.objective_dice_text.textContent = "objectif à atteindre: " + result
+                page_tag.available_number_text.textContent = "avec " + available_numbers.join(' ') + '.'
+                add_new_tag_in_body(page_tag.objective_dice_text)
+                add_new_tag_in_body(page_tag.available_number_text)
+            }
+        )
 }
 
 function create_tag() {
@@ -91,6 +120,8 @@ function create_tag() {
     page_tag.button_throw_dice = document.createElement("button");
     page_tag.amount_movement_by_movement_dice = document.createElement("p");
     page_tag.mandatory_operation = document.createElement("p");
+    page_tag.objective_dice_text = document.createElement("p");
+    page_tag.available_number_text = document.createElement("p");
 }
 
 function initialize_tag() {
@@ -106,7 +137,7 @@ function initialize_global_tag_var() {
     create_tag();
     initialize_tag();
 
-    document.body.appendChild(page_tag.button_start_turn);
+    add_new_tag_in_body(page_tag.button_start_turn)
 }
 
 
