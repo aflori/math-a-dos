@@ -72,13 +72,17 @@ def get_game_js(request, player_id):
         # "player": get_player_by_id(player_id).asDict()
         "player_id": player_id,
     }
-    return render(request, "mathador/game.js", context,content_type="application/x-javascript")
+    return render(request, "mathador/game.js", context, content_type="application/x-javascript")
 
 
 def start_turn(request, player_id):
     game = get_game_from_DB()
-    from  mathador.action.throw_dice.throw_movement_dice import MoveDiceThrowCommand
+    from mathador.action.throw_dice.throw_movement_dice import MoveDiceThrowCommand
 
     command = MoveDiceThrowCommand(game_repo)
     command.execute(game.id)
     return http.JsonResponse(get_game_from_DB().asDict())
+
+
+def throw_enigm_dice(request, player_id):
+    return http.JsonResponse({"id": player_id})
