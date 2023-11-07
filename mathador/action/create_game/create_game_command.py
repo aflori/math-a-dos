@@ -1,6 +1,8 @@
 import random
 
 from mathador.DTO.game_element import Board, Player, Case, Dice
+from mathador.models import operations
+
 
 
 class CreateGame:
@@ -16,9 +18,9 @@ class CreateGame:
 
 
 def _create_random_case(number_case: int):
-    operation = ['+', '-', '*', '÷']
+    operation = [operations["plus"], operations["subtraction"], operations["multiplication"], operations["division"]]
     operation_mandatory = random.sample(operation, 2)
     is_second_operation_none = random.randint(1, 5) == 1  # 1 out of 5 chance
     if not is_second_operation_none:
-        operation_mandatory[1] = '.'
+        operation_mandatory[1] = operations["none"]
     return Case(number_case, operation_mandatory[0], operation_mandatory[1])
