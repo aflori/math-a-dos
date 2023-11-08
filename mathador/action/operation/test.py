@@ -1,8 +1,11 @@
 import pytest
 
 from mathador.DTO.operation import *
-from mathador.action.operation.check import operation_is_valid
+from .check import operation_is_valid
+from .check_operation_and_move_player import MovePlayerCommand, MoveNotPossibleException
+from mathador.DTO.repository.game_repository_in_memory import GameRepositoryInMemory
 from mathador.models import operations
+from ...DTO.game_element import *
 
 
 def test_result_is_in_starting_number():
@@ -128,3 +131,50 @@ def test_float_operation():
     ])
 
     assert operation_is_valid(operation)
+
+
+def test_cmd_okay():
+    game = Board(cases=[Case(1, mandatory_operation=operations["plus"], optional_operation=operations["none"])],
+                 dices=[Dice(3, 3), Dice(5, 5), Dice(5, 5)], moving_dice=Dice(1, 1), result_dice=Dice(99, 13),
+                 players=[Player("player 1", 0)])
+    repository = GameRepositoryInMemory()
+    repository.save_game(game)
+
+    list_operations = [
+        SingleOperation(operation_done=operations["plus"], number_1=5, number_2=5, result=10,
+                        available_number_after_operation=[3, 10]),
+        SingleOperation(operation_done=operations["plus"], number_1=3, number_2=10, result=13,
+                        available_number_after_operation=[13])
+    ]
+    cmd = MovePlayerCommand(repository)
+
+    cmd.execute(0, list_operations, 0)
+
+    actual = repository.get_game_by_id(0)
+    expected = Board(cases=[Case(1, mandatory_operation=operations["plus"], optional_operation=operations["none"])],
+                     dices=[Dice(3, 3), Dice(5, 5), Dice(5, 5)], moving_dice=Dice(1, 1), result_dice=Dice(99, 13),
+                     players=[Player("player 1", 1)])
+
+    assert actual == expected
+
+def test_cmd_not_okay():
+    def test_cmd_okay():
+        game = Board(cases=[Case(1, mandatory_operation=operations["division"], optional_operation=operations["none"])],
+                     dices=[Dice(3, 3), Dice(5, 5), Dice(5, 5)], moving_dice=Dice(1, 1), result_dice=Dice(99, 13),
+                     players=[Player("player 1", 0)])
+        repository = GameRepositoryInMemory()
+        repository.save_game(game)
+
+        list_operations = [
+            SingleOperation(operation_done=operations["plus"], number_1=5, number_2=5, result=10,
+                            available_number_after_operation=[3, 10]),
+            SingleOperation(operation_done=operations["plus"], number_1=3, number_2=10, result=13,
+                            available_number_after_operation=[13])
+        ]
+        cmd = MovePlayerCommand(repository)
+
+        try:
+            cmd.execute(0, list_operations, 0)
+            pytest.fail()
+        except MoveNotPossibleException:
+            assert game == repository.get_game_by_id(0)
