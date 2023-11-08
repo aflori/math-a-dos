@@ -23,3 +23,10 @@ class GameRepositoryInMemory:
 
     def delete(self, game: game_element.Board):
         del self._games[game.id]
+
+    def get_player_by_id(self, id_player: int):
+        for game in self._games.values():
+            for player in game.players:
+                if player.id == id_player:
+                    return player
+        return None
