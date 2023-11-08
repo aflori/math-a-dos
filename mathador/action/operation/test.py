@@ -5,11 +5,12 @@ from mathador.action.operation.check import operation_is_valid
 from mathador.models import operations
 
 
-
 def test_result_is_in_starting_number():
-    operation_tested = TotalOperation(mandatory_operation=[], start_number=[1,2,3,12], awaited_result=12, list_operation= [])
+    operation_tested = TotalOperation(mandatory_operation=[], start_number=[1, 2, 3, 12], awaited_result=12,
+                                      list_operation=[])
 
     assert operation_is_valid(operation_tested)
+
 
 def test_simple_check():
     operation_tested = TotalOperation(mandatory_operation=[operations["plus"]], start_number=[1, 2, 1, 5, 1],

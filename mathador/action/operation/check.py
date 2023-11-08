@@ -1,8 +1,21 @@
 from mathador.DTO.operation import *
 import copy
 
+
 class _WrongResultException(Exception):
     pass
+
+
+def operation_is_valid(operations: TotalOperation) -> bool:
+    try:
+        operations = _convert_integer_to_float(operations)
+        _awaited_result_is_present(operations.list_operation, operations.awaited_result, operations.start_number)
+        _operation_result_check(operations.list_operation)
+        _update_available_number_check(operations.list_operation, operations.start_number)
+        _mandatory_operation_used_to_make_final_number(operations.mandatory_operation, operations.list_operation)
+        return True
+    except _WrongResultException:
+        return False
 
 
 """
@@ -10,11 +23,12 @@ Those 4 check function raise an exception if calcul is wrongly done
 """
 
 
-def _awaited_result_is_present(operation_list: list[SingleOperation], awaited_result: int, original_number: list[float]):
-    if ( len(operation_list)==0 ) and ( awaited_result not in original_number ):
+def _awaited_result_is_present(operation_list: list[SingleOperation], awaited_result: int,
+                               original_number: list[float]):
+    if (len(operation_list) == 0) and (awaited_result not in original_number):
         raise _WrongResultException
 
-    if ( len(operation_list)!=0 ) and ( awaited_result != operation_list[-1].result ):
+    if (len(operation_list) != 0) and (awaited_result != operation_list[-1].result):
         raise _WrongResultException()
 
 
@@ -25,20 +39,23 @@ def _operation_result_check(operations_list: list[SingleOperation]):
         if operation.result != result:
             raise _WrongResultException
 
+
 def _update_available_number_check(operations: list[SingleOperation], original_number: list[int]):
     for operation in operations:
-
         __check_if_numbers_are_in_original_number_list(operation.number_1, operation.number_2, original_number)
-        __check_if_reult_original_number_is_updated(original_number, operation.available_number_after_operation, operation.number_1, operation.number_2, operation.result)
+        __check_if_reult_original_number_is_updated(original_number, operation.available_number_after_operation,
+                                                    operation.number_1, operation.number_2, operation.result)
 
         original_number = operation.available_number_after_operation
 
 
-def _mandatory_operation_used_to_make_final_number(mandatory_operations: list[str], operation_list: list[SingleOperation]):
+def _mandatory_operation_used_to_make_final_number(mandatory_operations: list[str],
+                                                   operation_list: list[SingleOperation]):
     mandatory_operations = copy.deepcopy(mandatory_operations)
     operation_list = copy.deepcopy(operation_list)
     __clean_unused_numbers(operation_list)
     __check_if_mandatories_operation_is_present(mandatory_operations, operation_list)
+
 
 def _convert_integer_to_float(operations: TotalOperation):
     operations = copy.deepcopy(operations)
@@ -53,18 +70,6 @@ def _convert_integer_to_float(operations: TotalOperation):
             single_op.available_number_after_operation[i] = float(single_op.available_number_after_operation[i])
 
     return operations
-
-
-def operation_is_valid(operations: TotalOperation) -> bool:
-    try:
-        operations = _convert_integer_to_float(operations)
-        _awaited_result_is_present(operations.list_operation, operations.awaited_result, operations.start_number)
-        _operation_result_check(operations.list_operation)
-        _update_available_number_check(operations.list_operation, operations.start_number)
-        _mandatory_operation_used_to_make_final_number(operations.mandatory_operation, operations.list_operation)
-        return True
-    except _WrongResultException:
-        return False
 
 
 def __clean_unused_numbers(operation_list):
@@ -89,10 +94,11 @@ def __check_if_mandatories_operation_is_present(mandatory_operations, operation_
         if operation.operation_done in mandatory_operations:
             mandatory_operations.remove(operation.operation_done)
     if len(mandatory_operations) != 0:
-        raise _WrongResultException 
+        raise _WrongResultException
 
 
-def __check_if_reult_original_number_is_updated(available_number_start:list[float], available_number_end:list[float], n1:float, n2:float, result: float):
+def __check_if_reult_original_number_is_updated(available_number_start: list[float], available_number_end: list[float],
+                                                n1: float, n2: float, result: float):
     available_number_start = copy.deepcopy(available_number_start)
     ___remove_from_list(available_number_start, n1)
     ___remove_from_list(available_number_start, n2)

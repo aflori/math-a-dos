@@ -4,7 +4,6 @@ from mathador.DTO.game_element import Board, Player, Case, Dice
 from mathador.models import operations
 
 
-
 class CreateGame:
     def __init__(self, repository):
         self.repository = repository
