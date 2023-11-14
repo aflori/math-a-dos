@@ -76,6 +76,10 @@ function send_start_turn_request() {
         );
 }
 
+function clean_tag_content(global_section) {
+    global_section.innerHTML = "";
+}
+
 function send_throw_dice_request() {
     function extract_available_numbers(json) {
         const available_numbers = []
@@ -86,10 +90,13 @@ function send_throw_dice_request() {
         return available_numbers;
     }
 
-    function add_available_number_buttons(available_numbers) {
+    function add_available_number_buttons(available_numbers, objective) {
         const global_section = page_tag.operation_form.available_number_tags;
+        clean_tag_content(global_section.tag);
+        global_section.tag.textContent = "il faut faire " + objective + " avec: "
         for (let i = 0; i < available_numbers.length; i++) {
             const button_tag = document.createElement("button");
+            button_tag.type = "button";
             global_section.numbers_tag.push(button_tag);
             global_section.tag.appendChild(button_tag);
             button_tag.textContent = available_numbers[i].toString();
@@ -148,7 +155,7 @@ function send_throw_dice_request() {
                 const global_section = page_tag.operation_form.global_tag;
                 document.body.appendChild(global_section);
 
-                add_available_number_buttons(operation_data.available_number);
+                add_available_number_buttons(operation_data.available_number, json.result_dice.last_number_throw);
                 add_operation_configurations(global_section);
                 add_confirmation_buttons(global_section);
             }
