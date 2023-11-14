@@ -97,6 +97,61 @@ function send_throw_dice_request() {
         return available_numbers;
     }
 
+    function add_available_number_buttons(available_numbers, global_section) {
+        const available_number_tags_list = []
+        for (let i = 0; i < available_numbers.length; i++) {
+            const button_tag = document.createElement("button");
+            available_number_tags_list.push(button_tag);
+            global_section.appendChild(button_tag);
+            button_tag.textContent = available_numbers[i].toString();
+        }
+    }
+
+    function add_a_line_break(global_section) {
+        global_section.appendChild(document.createElement("br"));
+    }
+
+    function add_operation_configurations(global_section) {
+        function add_option_to_select_tag(select_tag, value, text_shown) {
+            let option_select = document.createElement("option");
+            option_select.value = value;
+            option_select.textContent = text_shown;
+            select_tag.appendChild(option_select);
+        }
+
+        const operation_text = document.createElement("p");
+        const operation_number_1 = document.createElement("input");
+        const operation_type = document.createElement("select");
+        const operation_number_2 = document.createElement("input");
+
+        operation_number_1.readOnly = true;
+        operation_number_2.readOnly = true;
+
+        operation_text.textContent = "opération voulue:";
+
+        add_option_to_select_tag(operation_type, "add", "+");
+        add_option_to_select_tag(operation_type, "sub", "-");
+        add_option_to_select_tag(operation_type, "mul", "*");
+        add_option_to_select_tag(operation_type, "div", "/");
+
+        global_section.appendChild(operation_text);
+        global_section.appendChild(operation_number_1);
+        global_section.appendChild(operation_type);
+        global_section.appendChild(operation_number_2);
+    }
+
+    function add_confirmation_buttons(global_section) {
+        const button_submit = document.createElement("input");
+        button_submit.type = "submit";
+        const button_reset_1_operation = document.createElement("input");
+        button_reset_1_operation.type = "reset";
+        const button_reset_all_operation = document.createElement("input")
+        button_reset_all_operation.type = "reset";
+        global_section.appendChild(button_submit);
+        global_section.appendChild(button_reset_1_operation);
+        global_section.appendChild(button_reset_all_operation);
+    }
+
     fetch("{% url 'math:throw_enigm_dices' player_id %}").then(
         data => {
             return data.json();
@@ -108,60 +163,16 @@ function send_throw_dice_request() {
 
                 const available_numbers = extract_available_numbers(json);
                 const awaited_result = json.result_dice.last_number_throw;
-                console.log(available_numbers, awaited_result);
+                console.log(awaited_result);
 
                 const global_section = document.createElement("form");
                 document.body.appendChild(global_section);
 
-                const available_number_tags_list = []
-                for (let i = 0; i < available_numbers.length; i++) {
-                    const button_tag= document.createElement("button");
-                    available_number_tags_list.push(button_tag);
-                    global_section.appendChild(button_tag);
-                    button_tag.textContent = available_numbers[i].toString();
-                }
-
-                global_section.appendChild( document.createElement("br"));
-
-                const operation_text = document.createElement("p");
-                const operation_number_1 = document.createElement("input");
-                const operation_type = document.createElement("select");
-                const operation_number_2 = document.createElement("input");
-                operation_number_1.readOnly = true;
-                operation_number_2.readOnly = true;
-                operation_text.textContent = "opération voulu:";
-                let option_select = document.createElement("option");
-                option_select.value = "add";
-                option_select.textContent = "+";
-                operation_type.appendChild(option_select);
-                option_select = document.createElement("option");
-                option_select.value = "sub";
-                option_select.textContent = "-";
-                operation_type.appendChild(option_select);
-                option_select = document.createElement("option");
-                option_select.value = "mul";
-                option_select.textContent = "*";
-                operation_type.appendChild(option_select);
-                option_select = document.createElement("option");
-                option_select.value = "div";
-                option_select.textContent = "/";
-                operation_type.appendChild(option_select);
-                global_section.appendChild(operation_text);
-                global_section.appendChild(operation_number_1);
-                global_section.appendChild(operation_type);
-                global_section.appendChild(operation_number_2);
-
-                global_section.appendChild( document.createElement("br"));
-
-                const button_submit = document.createElement("input");
-                button_submit.type="submit";
-                const button_reset_1_operation = document.createElement("input");
-                button_reset_1_operation.type="reset";
-                const button_reset_all_operation = document.createElement("input")
-                button_reset_all_operation.type = "reset";
-                global_section.appendChild(button_submit);
-                global_section.appendChild(button_reset_1_operation);
-                global_section.appendChild(button_reset_all_operation);
+                add_available_number_buttons(available_numbers, global_section);
+                add_a_line_break(global_section);
+                add_operation_configurations(global_section);
+                add_a_line_break(global_section);
+                add_confirmation_buttons(global_section);
             }
         )
 }
