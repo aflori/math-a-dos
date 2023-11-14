@@ -97,59 +97,29 @@ function send_throw_dice_request() {
         return available_numbers;
     }
 
-    function add_available_number_buttons(available_numbers, global_section) {
-        const available_number_tags_list = []
+    function add_available_number_buttons(available_numbers) {
+        const global_section = page_tag.operation_form.available_number_tags;
         for (let i = 0; i < available_numbers.length; i++) {
             const button_tag = document.createElement("button");
-            available_number_tags_list.push(button_tag);
-            global_section.appendChild(button_tag);
+            global_section.numbers_tag.push(button_tag);
+            global_section.tag.appendChild(button_tag);
             button_tag.textContent = available_numbers[i].toString();
         }
     }
 
-    function add_a_line_break(global_section) {
-        global_section.appendChild(document.createElement("br"));
-    }
+    function add_operation_configurations() {
 
-    function add_operation_configurations(global_section) {
-        function add_option_to_select_tag(select_tag, value, text_shown) {
-            let option_select = document.createElement("option");
-            option_select.value = value;
-            option_select.textContent = text_shown;
-            select_tag.appendChild(option_select);
-        }
 
-        const operation_text = document.createElement("p");
-        const operation_number_1 = document.createElement("input");
-        const operation_type = document.createElement("select");
-        const operation_number_2 = document.createElement("input");
+        const tags = page_tag.operation_form.operation_content;
+        const operation_number_1 = tags.element_tag.number_1;
+        const operation_number_2 = tags.element_tag.number_2;
 
-        operation_number_1.readOnly = true;
-        operation_number_2.readOnly = true;
-
-        operation_text.textContent = "opération voulue:";
-
-        add_option_to_select_tag(operation_type, "add", "+");
-        add_option_to_select_tag(operation_type, "sub", "-");
-        add_option_to_select_tag(operation_type, "mul", "*");
-        add_option_to_select_tag(operation_type, "div", "/");
-
-        global_section.appendChild(operation_text);
-        global_section.appendChild(operation_number_1);
-        global_section.appendChild(operation_type);
-        global_section.appendChild(operation_number_2);
+        operation_number_1.value = "";
+        operation_number_2.value = "";
     }
 
     function add_confirmation_buttons(global_section) {
-        const button_submit = document.createElement("input");
-        button_submit.type = "submit";
-        const button_reset_1_operation = document.createElement("input");
-        button_reset_1_operation.type = "reset";
-        const button_reset_all_operation = document.createElement("input")
-        button_reset_all_operation.type = "reset";
-        global_section.appendChild(button_submit);
-        global_section.appendChild(button_reset_1_operation);
-        global_section.appendChild(button_reset_all_operation);
+        const tags = page_tag.operation_form.buttons;
     }
 
     fetch("{% url 'math:throw_enigm_dices' player_id %}").then(
@@ -165,13 +135,11 @@ function send_throw_dice_request() {
                 const awaited_result = json.result_dice.last_number_throw;
                 console.log(awaited_result);
 
-                const global_section = document.createElement("form");
+                const global_section = page_tag.operation_form.global_tag;
                 document.body.appendChild(global_section);
 
-                add_available_number_buttons(available_numbers, global_section);
-                add_a_line_break(global_section);
+                add_available_number_buttons(available_numbers);
                 add_operation_configurations(global_section);
-                add_a_line_break(global_section);
                 add_confirmation_buttons(global_section);
             }
         )
@@ -184,27 +152,84 @@ function create_tag() {
     page_tag.button_throw_dice = document.createElement("button");
     page_tag.amount_movement_by_movement_dice = document.createElement("p");
     page_tag.mandatory_operation = document.createElement("p");
-    // page_tag.operation_content = {
-    //     tag: document.createElement("section"),
-    //     list_number_available: {
-    //         tag: document.createElement("div"),
-    //         list_number: []
-    //     },
-    //     form_to_make_operation: {
-    //         tag: null, // will be done later
-    //         list_field: [],
-    //         buttons: []
-    //     }
-    // };
+    page_tag.operation_form = {
+        global_tag: document.createElement("form"),
+        available_number_tags: {
+            tag: document.createElement("div"),
+            numbers_tag: []
+        },
+        operation_content: {
+            tag: document.createElement("div"),
+            element_tag: {
+                text: document.createElement("p"),
+                number_1: document.createElement("input"),
+                operator: document.createElement("select"),
+                number_2: document.createElement("input")
+            }
+        },
+        buttons: {
+            tag: document.createElement("div"),
+            buttons_tag: {
+                confirmation: document.createElement("input"),
+                reset_1: document.createElement("input"),
+                reset_all: document.createElement("input")
+            }
+
+        }
+    }
 }
 
 function initialize_tag() {
+    function initialize_operation_content_tags() {
+        function add_option_to_select_tag(select_tag, value, text_shown) {
+            let option_select = document.createElement("option");
+            option_select.value = value;
+            option_select.textContent = text_shown;
+            select_tag.appendChild(option_select);
+        }
+
+        const context_tag = page_tag.operation_form.operation_content;
+        context_tag.tag.appendChild(context_tag.element_tag.text);
+        context_tag.tag.appendChild(context_tag.element_tag.number_1);
+        context_tag.tag.appendChild(context_tag.element_tag.operator);
+        context_tag.tag.appendChild(context_tag.element_tag.number_2);
+        context_tag.element_tag.number_1.readOnly = true;
+        context_tag.element_tag.number_2.readOnly = true;
+        context_tag.element_tag.text.textContent = "opération:";
+
+        add_option_to_select_tag(context_tag.element_tag.operator, "add", "+");
+        add_option_to_select_tag(context_tag.element_tag.operator, "sub", "-");
+        add_option_to_select_tag(context_tag.element_tag.operator, "mul", "*");
+        add_option_to_select_tag(context_tag.element_tag.operator, "div", "/");
+    }
+    function initialize_button_content_tags() {
+        const tag_container = page_tag.operation_form.buttons
+        const global_section = tag_container.tag
+
+        const button_submit = tag_container.buttons_tag.confirmation;
+        const button_reset_1_operation = tag_container.buttons_tag.reset_1;
+        const button_reset_all_operation = tag_container.buttons_tag.reset_all;
+
+        global_section.appendChild(button_submit);
+        global_section.appendChild(button_reset_1_operation);
+        global_section.appendChild(button_reset_all_operation);
+        button_submit.type = "submit";
+        button_reset_1_operation.type = "reset";
+        button_reset_all_operation.type = "reset";
+    }
+
     page_tag.button_start_turn.textContent = "Se déplacer";
+
     page_tag.button_start_turn.addEventListener("click", send_start_turn_request);
-
     page_tag.button_throw_dice.textContent = "lancer les dés";
-    page_tag.button_throw_dice.addEventListener("click", send_throw_dice_request);
 
+    page_tag.button_throw_dice.addEventListener("click", send_throw_dice_request);
+    page_tag.operation_form.global_tag.appendChild(page_tag.operation_form.available_number_tags.tag);
+    page_tag.operation_form.global_tag.appendChild(page_tag.operation_form.operation_content.tag);
+    initialize_operation_content_tags();
+    initialize_button_content_tags();
+
+    page_tag.operation_form.global_tag.appendChild(page_tag.operation_form.buttons.tag);
 }
 
 function initialize_global_tag_var() {
