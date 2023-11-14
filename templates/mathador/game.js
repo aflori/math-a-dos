@@ -5,12 +5,16 @@ const page_tag = {
 };
 const player_id = {{ player_id }};
 
-function remove_body_child(tag_to_deleted ) {
+function remove_body_child(tag_to_deleted) {
     document.body.removeChild(tag_to_deleted);
 }
 
+function add_new_tag_in_body(element) {
+    document.body.appendChild(element);
+}
+
 function extract_player_from_id(player_id, game_state) {
-    for (let i=0; i<game_state.players.length; i++) {
+    for (let i = 0; i < game_state.players.length; i++) {
         if (game_state.players[i].id === player_id) {
             return game_state.players[i];
         }
@@ -27,16 +31,12 @@ function get_case_from_its_position(case_number, game_state) {
     }
     return undefined;
      */
-    return game_state.cases[case_number-1];
+    return game_state.cases[case_number - 1];
 }
 
 function get_case_operation_from_its_position(case_number, game_state) {
     const player_case = get_case_from_its_position(case_number, game_state);
-    return [ player_case.mandatory_operation, player_case.optional_operation];
-}
-
-function add_new_tag_in_body(element) {
-    document.body.appendChild(element);
+    return [player_case.mandatory_operation, player_case.optional_operation];
 }
 
 function send_start_turn_request() {
@@ -83,6 +83,10 @@ function send_start_turn_request() {
         );
 }
 
+function clean_tag_content(tag) {
+    tag.innerHTML = ""
+}
+
 function send_throw_dice_request() {
     function extract_available_numbers(json) {
         const available_numbers = []
@@ -102,13 +106,62 @@ function send_throw_dice_request() {
                 console.log(json);
                 remove_body_child(page_tag.button_throw_dice);
 
-                result = json.result_dice.last_number_throw
                 const available_numbers = extract_available_numbers(json);
+                const awaited_result = json.result_dice.last_number_throw;
+                console.log(available_numbers, awaited_result);
 
-                page_tag.objective_dice_text.textContent = "objectif à atteindre: " + result
-                page_tag.available_number_text.textContent = "avec " + available_numbers.join(' ') + '.'
-                add_new_tag_in_body(page_tag.objective_dice_text)
-                add_new_tag_in_body(page_tag.available_number_text)
+                const global_section = document.createElement("form");
+                document.body.appendChild(global_section);
+
+                const available_number_tags_list = []
+                for (let i = 0; i < available_numbers.length; i++) {
+                    const button_tag= document.createElement("button");
+                    available_number_tags_list.push(button_tag);
+                    global_section.appendChild(button_tag);
+                    button_tag.textContent = available_numbers[i].toString();
+                }
+
+                global_section.appendChild( document.createElement("br"));
+
+                const operation_text = document.createElement("p");
+                const operation_number_1 = document.createElement("input");
+                const operation_type = document.createElement("select");
+                const operation_number_2 = document.createElement("input");
+                operation_number_1.readOnly = true;
+                operation_number_2.readOnly = true;
+                operation_text.textContent = "opération voulu:";
+                let option_select = document.createElement("option");
+                option_select.value = "add";
+                option_select.textContent = "+";
+                operation_type.appendChild(option_select);
+                option_select = document.createElement("option");
+                option_select.value = "sub";
+                option_select.textContent = "-";
+                operation_type.appendChild(option_select);
+                option_select = document.createElement("option");
+                option_select.value = "mul";
+                option_select.textContent = "*";
+                operation_type.appendChild(option_select);
+                option_select = document.createElement("option");
+                option_select.value = "div";
+                option_select.textContent = "/";
+                operation_type.appendChild(option_select);
+                global_section.appendChild(operation_text);
+                global_section.appendChild(operation_number_1);
+                global_section.appendChild(operation_type);
+                global_section.appendChild(operation_number_2);
+
+                global_section.appendChild( document.createElement("br"));
+
+                const button_submit = document.createElement("input");
+                button_submit.type="submit";
+                const button_reset_1_operation = document.createElement("input");
+                button_reset_1_operation.type="reset";
+                const button_reset_all_operation = document.createElement("input")
+                button_reset_all_operation.type = "reset";
+                global_section.appendChild(button_submit);
+                global_section.appendChild(button_reset_1_operation);
+                global_section.appendChild(button_reset_all_operation);
             }
         )
 }
@@ -120,8 +173,18 @@ function create_tag() {
     page_tag.button_throw_dice = document.createElement("button");
     page_tag.amount_movement_by_movement_dice = document.createElement("p");
     page_tag.mandatory_operation = document.createElement("p");
-    page_tag.objective_dice_text = document.createElement("p");
-    page_tag.available_number_text = document.createElement("p");
+    // page_tag.operation_content = {
+    //     tag: document.createElement("section"),
+    //     list_number_available: {
+    //         tag: document.createElement("div"),
+    //         list_number: []
+    //     },
+    //     form_to_make_operation: {
+    //         tag: null, // will be done later
+    //         list_field: [],
+    //         buttons: []
+    //     }
+    // };
 }
 
 function initialize_tag() {
