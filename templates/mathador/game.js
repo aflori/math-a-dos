@@ -130,10 +130,12 @@ function send_throw_dice_request() {
 
         operation_data.available_number = extract_available_numbers(json);
         operation_data.awaited_result = json.result_dice.last_number_throw;
+
         const list_of_mandatory_operation = [];
         const player = extract_player_from_id(player_id, json);
         const case_number = player.on_the_case + json.moving_dice.last_number_throw;
         const case_for_mandatory_operation = get_case_from_its_position(case_number, json);
+
         list_of_mandatory_operation.push(convert_to_local_mandatory_operation_object(case_for_mandatory_operation.mandatory_operation));
         if (case_for_mandatory_operation.optional_operation !== ".") {
             list_of_mandatory_operation.push(convert_to_local_mandatory_operation_object(case_for_mandatory_operation.optional_operation));
@@ -187,9 +189,10 @@ function create_tag() {
         buttons: {
             tag: document.createElement("div"),
             buttons_tag: {
-                confirmation: document.createElement("input"),
-                reset_1: document.createElement("input"),
-                reset_all: document.createElement("input")
+                submit: document.createElement("button"),
+                confirm_operation: document.createElement("button"),
+                reset_1: document.createElement("button"),
+                reset_all: document.createElement("button")
             }
 
         }
@@ -224,16 +227,23 @@ function initialize_tag() {
         const tag_container = page_tag.operation_form.buttons
         const global_section = tag_container.tag
 
-        const button_submit = tag_container.buttons_tag.confirmation;
+        const button_submit = tag_container.buttons_tag.submit;
+        const button_confirm = tag_container.buttons_tag.confirm_operation;
         const button_reset_1_operation = tag_container.buttons_tag.reset_1;
         const button_reset_all_operation = tag_container.buttons_tag.reset_all;
 
         global_section.appendChild(button_submit);
+        global_section.appendChild(button_confirm);
         global_section.appendChild(button_reset_1_operation);
         global_section.appendChild(button_reset_all_operation);
         button_submit.type = "submit";
+        button_submit.textContent = "Confirmer les opérations"
+        button_confirm.type = "submit";
+        button_confirm.textContent = "Effectuer l'opérations";
         button_reset_1_operation.type = "reset";
+        button_reset_1_operation.textContent = "annuler un mouvement";
         button_reset_all_operation.type = "reset";
+        button_reset_all_operation.textContent = "annuler tous les mouvements";
     }
 
     page_tag.button_start_turn.textContent = "Se déplacer";
