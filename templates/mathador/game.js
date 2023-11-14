@@ -4,6 +4,7 @@ const page_tag = {
     next_case_position: null,
 };
 const player_id = {{ player_id }};
+const operation_data = {};
 
 function remove_body_child(tag_to_deleted) {
     document.body.removeChild(tag_to_deleted);
@@ -23,14 +24,6 @@ function extract_player_from_id(player_id, game_state) {
 }
 
 function get_case_from_its_position(case_number, game_state) {
-    /*
-    for (let i=0; i<game_state.cases.length; i++) {
-        if (game_state.cases[i].case_number_on_board === i) {
-            return game_state.cases[i]
-        }
-    }
-    return undefined;
-     */
     return game_state.cases[case_number - 1];
 }
 
@@ -83,10 +76,6 @@ function send_start_turn_request() {
         );
 }
 
-function clean_tag_content(tag) {
-    tag.innerHTML = ""
-}
-
 function send_throw_dice_request() {
     function extract_available_numbers(json) {
         const available_numbers = []
@@ -122,23 +111,44 @@ function send_throw_dice_request() {
         const tags = page_tag.operation_form.buttons;
     }
 
+    function initialize_operation_data(json) {
+        function convert_to_local_mandatory_operation_object(operation_name) {
+            return {
+                operation: operation_name,
+                has_used: false
+            }
+        }
+
+        remove_body_child(page_tag.button_throw_dice);
+
+        operation_data.available_number = extract_available_numbers(json);
+        operation_data.awaited_result = json.result_dice.last_number_throw;
+        const list_of_mandatory_operation = [];
+        const player = extract_player_from_id(player_id, json);
+        const case_number = player.on_the_case + json.moving_dice.last_number_throw;
+        const case_for_mandatory_operation = get_case_from_its_position(case_number, json);
+        list_of_mandatory_operation.push(convert_to_local_mandatory_operation_object(case_for_mandatory_operation.mandatory_operation));
+        if (case_for_mandatory_operation.optional_operation !== ".") {
+            list_of_mandatory_operation.push(convert_to_local_mandatory_operation_object(case_for_mandatory_operation.optional_operation));
+        }
+        operation_data.mandatory_operation = list_of_mandatory_operation;
+    }
+
     fetch("{% url 'math:throw_enigm_dices' player_id %}").then(
         data => {
             return data.json();
         })
         .then(
             json => {
-                console.log(json);
-                remove_body_child(page_tag.button_throw_dice);
+                initialize_operation_data(json);
 
-                const available_numbers = extract_available_numbers(json);
-                const awaited_result = json.result_dice.last_number_throw;
-                console.log(awaited_result);
+                console.log(json);
+                console.log(operation_data);
 
                 const global_section = page_tag.operation_form.global_tag;
                 document.body.appendChild(global_section);
 
-                add_available_number_buttons(available_numbers);
+                add_available_number_buttons(operation_data.available_number);
                 add_operation_configurations(global_section);
                 add_confirmation_buttons(global_section);
             }
@@ -202,6 +212,7 @@ function initialize_tag() {
         add_option_to_select_tag(context_tag.element_tag.operator, "mul", "*");
         add_option_to_select_tag(context_tag.element_tag.operator, "div", "/");
     }
+
     function initialize_button_content_tags() {
         const tag_container = page_tag.operation_form.buttons
         const global_section = tag_container.tag
