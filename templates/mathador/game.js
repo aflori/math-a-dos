@@ -110,11 +110,11 @@ function send_throw_dice_request() {
         const operation_number_1 = tags.element_tag.number_1;
         const operation_number_2 = tags.element_tag.number_2;
 
-        operation_number_1.value = "";
-        operation_number_2.value = "";
+        operation_number_1.textContent = "";
+        operation_number_2.textContent = "";
     }
 
-    function add_confirmation_buttons(global_section) {
+    function add_confirmation_buttons() {
         const tags = page_tag.operation_form.buttons;
     }
 
@@ -158,8 +158,8 @@ function send_throw_dice_request() {
                 document.body.appendChild(global_section);
 
                 add_available_number_buttons(operation_data.available_number, json.result_dice.last_number_throw);
-                add_operation_configurations(global_section);
-                add_confirmation_buttons(global_section);
+                add_operation_configurations();
+                add_confirmation_buttons();
             }
         )
 }
@@ -181,9 +181,9 @@ function create_tag() {
             tag: document.createElement("div"),
             element_tag: {
                 text: document.createElement("p"),
-                number_1: document.createElement("input"),
+                number_1: document.createElement("button"),
                 operator: document.createElement("select"),
-                number_2: document.createElement("input")
+                number_2: document.createElement("button")
             }
         },
         buttons: {
@@ -213,8 +213,8 @@ function initialize_tag() {
         context_tag.tag.appendChild(context_tag.element_tag.number_1);
         context_tag.tag.appendChild(context_tag.element_tag.operator);
         context_tag.tag.appendChild(context_tag.element_tag.number_2);
-        context_tag.element_tag.number_1.readOnly = true;
-        context_tag.element_tag.number_2.readOnly = true;
+        context_tag.element_tag.number_1.type = "button";
+        context_tag.element_tag.number_2.type = "button";
         context_tag.element_tag.text.textContent = "opération:";
 
         add_option_to_select_tag(context_tag.element_tag.operator, "add", "+");
