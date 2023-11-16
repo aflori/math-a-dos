@@ -5,9 +5,6 @@ const page_tag = {
 };
 const player_id = {{ player_id }};
 const operation_data = {
-    available_number: [],
-    awaited_result: -1,
-    mandatory_operation: [],
     operations_list: []
 };
 
@@ -104,8 +101,7 @@ function use_number_in_operation(event) {
 
     if (operation_container.number_1.textContent === "") {
         move_to_tag(operation_container.number_1);
-    }
-    else if (operation_container.number_2.textContent === "" ){
+    } else if (operation_container.number_2.textContent === "") {
         move_to_tag(operation_container.number_2);
     }
 
@@ -167,38 +163,12 @@ function send_throw_dice_request() {
         // const tags = page_tag.operation_form.buttons;
     }
 
-    function initialize_operation_data(json) {
-        function convert_to_local_mandatory_operation_object(operation_name) {
-            return {
-                operation: operation_name,
-                has_used: false
-            }
-        }
-
-        remove_body_child(page_tag.button_throw_dice);
-
-        operation_data.available_number = extract_available_numbers(json);
-        operation_data.awaited_result = json.result_dice.last_number_throw;
-
-        const list_of_mandatory_operation = [];
-        const player = extract_player_from_id(player_id, json);
-        const case_number = player.on_the_case + json.moving_dice.last_number_throw;
-        const case_for_mandatory_operation = get_case_from_its_position(case_number, json);
-
-        list_of_mandatory_operation.push(convert_to_local_mandatory_operation_object(case_for_mandatory_operation.mandatory_operation));
-        if (case_for_mandatory_operation.optional_operation !== ".") {
-            list_of_mandatory_operation.push(convert_to_local_mandatory_operation_object(case_for_mandatory_operation.optional_operation));
-        }
-        operation_data.mandatory_operation = list_of_mandatory_operation;
-    }
-
     fetch("{% url 'math:throw_enigm_dices' player_id %}").then(
         data => {
             return data.json();
         })
         .then(
             json => {
-                initialize_operation_data(json);
 
                 const global_section = page_tag.operation_form.global_tag;
                 document.body.appendChild(global_section);
@@ -247,19 +217,19 @@ function create_tag() {
 
 function confirm_single_operation(event) {
     function put_up_to_date_result(operation) {
-        if (operation.operation_done==="add") {
+        if (operation.operation_done === "add") {
             operation.operation_done = "+";
             operation.result = operation.number_1 + operation.number_2;
         }
-        if (operation.operation_done==="mul") {
+        if (operation.operation_done === "mul") {
             operation.operation_done = "*";
             operation.result = operation.number_1 * operation.number_2;
         }
-        if (operation.operation_done==="div") {
+        if (operation.operation_done === "div") {
             operation.operation_done = "/";
             operation.result = operation.number_1 / operation.number_2;
         }
-        if (operation.operation_done==="sub") {
+        if (operation.operation_done === "sub") {
             operation.operation_done = "-";
             operation.result = operation.number_1 - operation.number_2;
         }
@@ -283,6 +253,7 @@ function confirm_single_operation(event) {
         update_document_tag();
 
     }
+
     event.preventDefault();
     const operation_tag = page_tag.operation_form.operation_content.element_tag;
 
@@ -307,6 +278,49 @@ function confirm_single_operation(event) {
     operation_tag.number_2.textContent = "";
 
     console.log(operation_data);
+}
+
+function return_one_operation_back() {
+    function removed_operation_numbers() {
+        const operation_details = page_tag.operation_form.operation_content.element_tag;
+        remove_number_in_operation({target: operation_details.number_1});
+        remove_number_in_operation({target: operation_details.number_2});
+    }
+
+    function remove_available_number(number) {
+        number = number.toString();
+        const available_number_on_document = page_tag.operation_form.available_number_tags.numbers_tag;
+
+        let i=0;
+        while( i < available_number_on_document.length) {
+            const tag_tested = available_number_on_document[i];
+            if (tag_tested.textContent === number) {
+                tag_tested.remove();
+                available_number_on_document.splice(i,1);
+            }
+            i++;
+        }
+    }
+
+    function add_available_number(number) {
+        number = number.toString();
+        const available_number_on_document = page_tag.operation_form.available_number_tags.numbers_tag;
+
+        const new_tag = document.createElement("button");
+        update_as_available_number_in_operation(new_tag, number);
+        available_number_on_document.push(new_tag);
+    }
+
+    if (operation_data.operations_list.length === 0) {
+        return;
+    }
+    const operation_removed = operation_data.operations_list.pop();
+
+    removed_operation_numbers();
+
+    remove_available_number(operation_removed.result);
+    add_available_number(operation_removed.number_1);
+    add_available_number(operation_removed.number_2);
 }
 
 function initialize_tag() {
@@ -359,6 +373,7 @@ function initialize_tag() {
         button_reset_all_operation.textContent = "annuler tous les mouvements";
 
         button_confirm.addEventListener("click", confirm_single_operation);
+        button_reset_1_operation.addEventListener("click", return_one_operation_back);
     }
 
     page_tag.button_start_turn.textContent = "Se déplacer";
