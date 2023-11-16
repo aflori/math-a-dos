@@ -106,20 +106,23 @@ function use_number_in_operation(event) {
 
 }
 
+function update_as_available_number_in_operation(new_tag, tag_content) {
+    new_tag.textContent = tag_content;
+    new_tag.type = "button";
+
+    page_tag.operation_form.available_number_tags.numbers_tag.push(new_tag);
+    page_tag.operation_form.available_number_tags.tag.appendChild(new_tag);
+    new_tag.addEventListener("click", use_number_in_operation);
+}
+
 function remove_number_in_operation(event) {
     const target_tag = event.target;
     if (target_tag.textContent === "") {
         return;
     }
 
-    const number_tag_list = page_tag.operation_form.available_number_tags.numbers_tag;
     const new_tag = document.createElement("button");
-    new_tag.type = "button";
-    new_tag.textContent = target_tag.textContent;
-
-    number_tag_list.push(new_tag);
-    page_tag.operation_form.available_number_tags.tag.appendChild(new_tag);
-    new_tag.addEventListener("click", use_number_in_operation);
+    update_as_available_number_in_operation(new_tag, target_tag.textContent);
 
     target_tag.textContent = "";
 }
@@ -140,11 +143,7 @@ function send_throw_dice_request() {
         global_section.tag.textContent = "il faut faire " + objective + " avec: "
         for (let i = 0; i < available_numbers.length; i++) {
             const button_tag = document.createElement("button");
-            button_tag.type = "button";
-            global_section.numbers_tag.push(button_tag);
-            global_section.tag.appendChild(button_tag);
-            button_tag.textContent = available_numbers[i].toString();
-            button_tag.addEventListener("click",use_number_in_operation);
+            update_as_available_number_in_operation(button_tag, available_numbers[i].toString())
         }
     }
 
@@ -160,7 +159,7 @@ function send_throw_dice_request() {
     }
 
     function add_confirmation_buttons() {
-        const tags = page_tag.operation_form.buttons;
+        // const tags = page_tag.operation_form.buttons;
     }
 
     function initialize_operation_data(json) {
@@ -195,9 +194,6 @@ function send_throw_dice_request() {
         .then(
             json => {
                 initialize_operation_data(json);
-
-                console.log(json);
-                console.log(operation_data);
 
                 const global_section = page_tag.operation_form.global_tag;
                 document.body.appendChild(global_section);
@@ -316,7 +312,4 @@ function initialize_global_tag_var() {
 }
 
 
-window.addEventListener("DOMContentLoaded", () => {
-        initialize_global_tag_var();
-    }
-);
+window.addEventListener("DOMContentLoaded", initialize_global_tag_var);
