@@ -82,8 +82,7 @@ function clean_tag_content(global_section) {
 
 function use_number_in_operation(event) {
 
-    function move_to_tag(target) {
-        const button_tag = event.target;
+    function move_to_tag(target, button_tag = event.target) {
         const tag_content = button_tag.textContent;
         const page_tag_buttons_tag = page_tag.operation_form.available_number_tags.numbers_tag;
         target.textContent = tag_content;
@@ -100,7 +99,6 @@ function use_number_in_operation(event) {
 
     if (operation_container.number_1.textContent === "") {
         move_to_tag(operation_container.number_1);
-
     }
     else if (operation_container.number_2.textContent === "" ){
         move_to_tag(operation_container.number_2);
