@@ -107,8 +107,11 @@ function use_number_in_operation(event) {
 }
 
 function remove_number_in_operation(event) {
-
     const target_tag = event.target;
+    if (target_tag.textContent === "") {
+        return;
+    }
+
     const number_tag_list = page_tag.operation_form.available_number_tags.numbers_tag;
     const new_tag = document.createElement("button");
     new_tag.type = "button";
@@ -116,6 +119,7 @@ function remove_number_in_operation(event) {
 
     number_tag_list.push(new_tag);
     page_tag.operation_form.available_number_tags.tag.appendChild(new_tag);
+    new_tag.addEventListener("click", use_number_in_operation);
 
     target_tag.textContent = "";
 }
@@ -153,8 +157,6 @@ function send_throw_dice_request() {
 
         operation_number_1.textContent = "";
         operation_number_2.textContent = "";
-        operation_number_1.addEventListener("click", remove_number_in_operation);
-        operation_number_2.addEventListener("click", remove_number_in_operation);
     }
 
     function add_confirmation_buttons() {
@@ -260,6 +262,9 @@ function initialize_tag() {
         context_tag.element_tag.number_2.type = "button";
         context_tag.element_tag.text.textContent = "opération:";
 
+        context_tag.element_tag.number_1.addEventListener("click", remove_number_in_operation);
+        context_tag.element_tag.number_2.addEventListener("click", remove_number_in_operation);
+
         add_option_to_select_tag(context_tag.element_tag.operator, "add", "+");
         add_option_to_select_tag(context_tag.element_tag.operator, "sub", "-");
         add_option_to_select_tag(context_tag.element_tag.operator, "mul", "*");
@@ -280,9 +285,9 @@ function initialize_tag() {
         global_section.appendChild(button_reset_1_operation);
         global_section.appendChild(button_reset_all_operation);
         button_submit.type = "submit";
-        button_submit.textContent = "Confirmer les opérations"
+        button_submit.textContent = "le compte est bon!"
         button_confirm.type = "submit";
-        button_confirm.textContent = "Effectuer l'opérations";
+        button_confirm.textContent = "Confirmer l'opérations";
         button_reset_1_operation.type = "reset";
         button_reset_1_operation.textContent = "annuler un mouvement";
         button_reset_all_operation.type = "reset";
