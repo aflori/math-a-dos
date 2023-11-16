@@ -81,22 +81,18 @@ function clean_tag_content(global_section) {
 }
 
 function use_number_in_operation(event) {
-    // console.log(event);
 
     function move_to_tag(target) {
         const button_tag = event.target;
         const tag_content = button_tag.textContent;
         const page_tag_buttons_tag = page_tag.operation_form.available_number_tags.numbers_tag;
         target.textContent = tag_content;
-        console.log(page_tag_buttons_tag)
 
         const index = page_tag_buttons_tag.indexOf(button_tag);
         if (index > -1) {
             page_tag_buttons_tag.splice(index, 1);
         }
         button_tag.remove();
-
-        console.log(page_tag_buttons_tag)
 
     }
 
@@ -145,6 +141,8 @@ function send_throw_dice_request() {
 
         operation_number_1.textContent = "";
         operation_number_2.textContent = "";
+        operation_number_1.addEventListener("click", remove_number_in_operation);
+        operation_number_2.addEventListener("click", remove_number_in_operation);
     }
 
     function add_confirmation_buttons() {
