@@ -173,7 +173,8 @@ function send_throw_dice_request() {
                 const global_section = page_tag.operation_form.global_tag;
                 document.body.appendChild(global_section);
 
-                add_available_number_buttons(operation_data.available_number, json.result_dice.last_number_throw);
+                const available_number = extract_available_numbers(json);
+                add_available_number_buttons(available_number, json.result_dice.last_number_throw);
                 add_operation_configurations();
                 add_confirmation_buttons();
             }
@@ -323,6 +324,12 @@ function return_one_operation_back() {
     add_available_number(operation_removed.number_2);
 }
 
+function remove_all_operation() {
+    while (operation_data.operations_list.length !== 0) {
+        return_one_operation_back();
+    }
+}
+
 function initialize_tag() {
     function initialize_operation_content_tags() {
         function add_option_to_select_tag(select_tag, value, text_shown) {
@@ -374,6 +381,7 @@ function initialize_tag() {
 
         button_confirm.addEventListener("click", confirm_single_operation);
         button_reset_1_operation.addEventListener("click", return_one_operation_back);
+        button_reset_all_operation.addEventListener("click", remove_all_operation);
     }
 
     page_tag.button_start_turn.textContent = "Se déplacer";
