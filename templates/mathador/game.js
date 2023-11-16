@@ -4,7 +4,12 @@ const page_tag = {
     next_case_position: null,
 };
 const player_id = {{ player_id }};
-const operation_data = {};
+const operation_data = {
+    available_number: [],
+    awaited_result: -1,
+    mandatory_operation: [],
+    operations_list: []
+};
 
 function remove_body_child(tag_to_deleted) {
     document.body.removeChild(tag_to_deleted);
@@ -240,6 +245,70 @@ function create_tag() {
     }
 }
 
+function confirm_single_operation(event) {
+    function put_up_to_date_result(operation) {
+        if (operation.operation_done==="add") {
+            operation.operation_done = "+";
+            operation.result = operation.number_1 + operation.number_2;
+        }
+        if (operation.operation_done==="mul") {
+            operation.operation_done = "*";
+            operation.result = operation.number_1 * operation.number_2;
+        }
+        if (operation.operation_done==="div") {
+            operation.operation_done = "/";
+            operation.result = operation.number_1 / operation.number_2;
+        }
+        if (operation.operation_done==="sub") {
+            operation.operation_done = "-";
+            operation.result = operation.number_1 - operation.number_2;
+        }
+    }
+
+    function update_available_numbers(operation, available_number_tag) {
+        function update_operation_object() {
+            available_number_tag.numbers_tag.forEach((element) => {
+                const number = Number(element.textContent);
+                operation.available_number_after_operation.push(number);
+            })
+            operation.available_number_after_operation.push(operation.result);
+        }
+
+        function update_document_tag() {
+            const new_available_number = document.createElement("button");
+            update_as_available_number_in_operation(new_available_number, operation.result.toString());
+        }
+
+        update_operation_object();
+        update_document_tag();
+
+    }
+    event.preventDefault();
+    const operation_tag = page_tag.operation_form.operation_content.element_tag;
+
+    if (operation_tag.textContent === "" || operation_tag.number_2.textContent === "") {
+        return;
+    }
+
+    const operation = {
+        operation_done: operation_tag.operator.value,
+        number_1: Number(operation_tag.number_1.textContent),
+        number_2: Number(operation_tag.number_2.textContent),
+        result: null,
+        available_number_after_operation: []
+    }
+
+    put_up_to_date_result(operation);
+
+    update_available_numbers(operation, page_tag.operation_form.available_number_tags)
+    operation_data.operations_list.push(operation);
+
+    operation_tag.number_1.textContent = ""; //numbers are used
+    operation_tag.number_2.textContent = "";
+
+    console.log(operation_data);
+}
+
 function initialize_tag() {
     function initialize_operation_content_tags() {
         function add_option_to_select_tag(select_tag, value, text_shown) {
@@ -288,6 +357,8 @@ function initialize_tag() {
         button_reset_1_operation.textContent = "annuler un mouvement";
         button_reset_all_operation.type = "reset";
         button_reset_all_operation.textContent = "annuler tous les mouvements";
+
+        button_confirm.addEventListener("click", confirm_single_operation);
     }
 
     page_tag.button_start_turn.textContent = "Se déplacer";
