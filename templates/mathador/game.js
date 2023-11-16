@@ -108,6 +108,20 @@ function use_number_in_operation(event) {
 
 }
 
+function remove_number_in_operation(event) {
+
+    const target_tag = event.target;
+    const number_tag_list = page_tag.operation_form.available_number_tags.numbers_tag;
+    const new_tag = document.createElement("button");
+    new_tag.type = "button";
+    new_tag.textContent = target_tag.textContent;
+
+    number_tag_list.push(new_tag);
+    page_tag.operation_form.available_number_tags.tag.appendChild(new_tag);
+
+    target_tag.textContent = "";
+}
+
 function send_throw_dice_request() {
     function extract_available_numbers(json) {
         const available_numbers = []
