@@ -1,7 +1,11 @@
 from django import http
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+
+import copy
 
 from math_a_dos.DTO.game_element import Board
+from math_a_dos.DTO.operation import convert_single_operation_json_to_single_list
 from math_a_dos.DTO.repository.game_repository_in_DB import GameRepositoryInDB
 from math_a_dos.form import *
 from math_a_dos.models import operations as ENUM_OPERATION
@@ -83,6 +87,24 @@ def start_turn(request, player_id):
 def throw_enigm_dice(request, player_id):
     from  math_a_dos.action.throw_dice.throw_enigm_dices import EnigmDiceThrowCommand
     return _run_command(EnigmDiceThrowCommand)
+
+@csrf_exempt
+def confirm_operation(request, player_id):
+    import json
+    raw_operations_data = json.loads(request.body)
+    raw_operations_data = convert_single_operation_json_to_single_list(raw_operations_data)
+
+
+    from math_a_dos.action.operation.check_operation_and_move_player import MovePlayerCommand, MoveNotPossibleException
+    command = MovePlayerCommand(game_repo)
+
+    print(raw_operations_data)
+    try:
+        command.execute(game_id = 1, list_operation=raw_operations_data, player_id=player_id)
+        return http.JsonResponse('{ is_valid: true}', safe=False)
+    except MoveNotPossibleException:
+        return http.JsonResponse('{ is_valid: false}', safe = False)
+
 
 
 def _run_command(command_class):
