@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'mathador.apps.MathadorConfig',
+    'math_a_dos.apps.Math_a_dos_Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

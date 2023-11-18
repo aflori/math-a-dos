@@ -25,6 +25,6 @@ def local_redirect(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("math-a-bor/", include("mathador.urls")),
+    path("math-a-bor/", include("math_a_dos.urls")),
     path("", local_redirect)
 ]
