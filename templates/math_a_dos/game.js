@@ -278,7 +278,7 @@ function confirm_single_operation(event) {
     operation_tag.number_1.textContent = ""; //numbers are used
     operation_tag.number_2.textContent = "";
 
-    console.log(operation_data);
+    // console.log(operation_data);
 }
 
 function return_one_operation_back() {
@@ -330,6 +330,38 @@ function remove_all_operation() {
     }
 }
 
+/*
+_getRequestJsonBody: function (jsonContent, method) {
+        const content = {
+            method: method
+        }
+        if (jsonContent != null) {
+            content["body"] = JSON.stringify(jsonContent);
+            content["headers"] = {
+                "Content-type": "application/json"
+            };
+        }
+
+        return content
+    } */
+function submit_full_operation(event) {
+    event.preventDefault();
+    console.log("Event");
+    const operations = operation_data.operations_list;
+
+    const request_content = {
+        method: "POST",
+        body: JSON.stringify(operations),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }
+
+    const body_content = {};
+    fetch("{% url 'math:confirm_full_operation' player_id %}", request_content);
+    return;
+}
+
 function initialize_tag() {
     function initialize_operation_content_tags() {
         function add_option_to_select_tag(select_tag, value, text_shown) {
@@ -379,6 +411,7 @@ function initialize_tag() {
         button_reset_all_operation.type = "reset";
         button_reset_all_operation.textContent = "annuler tous les mouvements";
 
+        button_submit.addEventListener("click", submit_full_operation);
         button_confirm.addEventListener("click", confirm_single_operation);
         button_reset_1_operation.addEventListener("click", return_one_operation_back);
         button_reset_all_operation.addEventListener("click", remove_all_operation);
