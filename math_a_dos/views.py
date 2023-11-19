@@ -98,17 +98,23 @@ def confirm_operation(request, player_id):
     from math_a_dos.action.operation.check_operation_and_move_player import MovePlayerCommand, MoveNotPossibleException
     command = MovePlayerCommand(game_repo)
 
-    print(raw_operations_data)
     try:
         command.execute(game_id = 1, list_operation=raw_operations_data, player_id=player_id)
-        return http.JsonResponse('{ is_valid: true}', safe=False)
-    except MoveNotPossibleException:
-        return http.JsonResponse('{ is_valid: false}', safe = False)
+        
+        return_value = { "is_valid": True }
 
+    except MoveNotPossibleException:
+        return_value = { "is_valid": False }
+
+    return_value["game"] = _get_game_as_dict()
+    return http.JsonResponse(return_value)
 
 
 def _run_command(command_class):
     game = get_game_from_DB()
     command = command_class(game_repo)
     command.execute(game.id)
-    return http.JsonResponse(get_game_from_DB().asDict())
+    return http.JsonResponse(_get_game_as_dict())
+
+def _get_game_as_dict():
+    return get_game_from_DB().asDict()
